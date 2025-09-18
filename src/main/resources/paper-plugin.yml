@@ -1,0 +1,6 @@
+name: TheWhiteBread
+version: '1.0'
+main: dev.theWhiteBread.TheWhiteBread
+bootstrapper: dev.theWhiteBread.TheWhiteBreadBootstrapper
+api-version: '1.21'
+load: STARTUP
