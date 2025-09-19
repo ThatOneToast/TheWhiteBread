@@ -5,8 +5,8 @@ import dev.theWhiteBread.menus.MenuItem
 import dev.theWhiteBread.menus.createMenuReadyItem
 import dev.theWhiteBread.portals.DimensionalReceiver
 import dev.theWhiteBread.portals.PortalManager
-import dev.theWhiteBread.portals.BreachPortal
-import dev.theWhiteBread.portals.UnstableBreachPortal
+import dev.theWhiteBread.portals.portal.BreachPortal
+import dev.theWhiteBread.portals.portal.UnstableBreachPortal
 import org.bukkit.Material
 import org.bukkit.entity.Player
 

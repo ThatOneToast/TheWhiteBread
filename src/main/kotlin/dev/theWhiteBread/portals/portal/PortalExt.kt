@@ -1,4 +1,6 @@
-package dev.theWhiteBread.portals
+package dev.theWhiteBread.portals.portal
+
+import dev.theWhiteBread.portals.PortalManager
 
 fun <T : Portal> T.temporaryPortal(): T {
     this.persistence = false

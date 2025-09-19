@@ -1,8 +1,10 @@
-package dev.theWhiteBread.portals
+package dev.theWhiteBread.portals.portal
 
 import dev.theWhiteBread.colorMul
 import dev.theWhiteBread.intToColor
 import dev.theWhiteBread.lerpColor
+import dev.theWhiteBread.portals.PortalManager
+import dev.theWhiteBread.portals.PortalType
 import dev.theWhiteBread.serializables.LocationSerializer
 import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit

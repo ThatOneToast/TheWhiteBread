@@ -34,7 +34,17 @@ tasks {
         // Your plugin's jar (or shadowJar if present) will be used automatically.
         minecraftVersion("1.21.8")
     }
+
+    register<Delete>("cleanServerWorlds") {
+        delete(
+            file("run/world"),
+            file("run/world_nether"),
+            file("run/world_the_end"),
+            file("run/cache")
+        )
+    }
 }
+
 
 val targetJavaVersion = 21
 kotlin {
@@ -53,3 +63,4 @@ tasks.processResources {
         expand(props)
     }
 }
+

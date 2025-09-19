@@ -2,7 +2,7 @@ package dev.theWhiteBread.listeners.events
 
 import dev.theWhiteBread.listeners.BaseCancellableEvent
 import dev.theWhiteBread.listeners.Events
-import dev.theWhiteBread.portals.Portal
+import dev.theWhiteBread.portals.portal.Portal
 import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList
 

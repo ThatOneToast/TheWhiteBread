@@ -12,6 +12,21 @@ import dev.theWhiteBread.TheWhiteBread
 import net.minecraft.commands.CommandSourceStack
 import org.bukkit.craftbukkit.CraftServer
 import org.bukkit.entity.Player
+import kotlin.collections.asReversed
+
+data class CommandArgument(
+    val name: String,
+    val type: ArgumentType<*>,
+    val suggests: SuggestionProvider<CommandSourceStack>? = null
+)
+
+inline fun <T> CommandContext<CommandSourceStack>.getOptional(
+    getter: (CommandContext<CommandSourceStack>) -> T
+): T? = kotlin.runCatching { getter(this) }.getOrNull()
+
+inline fun <reified T> CommandContext<CommandSourceStack>.getOptionalArgument(
+    name: String
+): T? = kotlin.runCatching { getArgument(name, T::class.java) }.getOrNull()
 
 object BreadedCommandMap {
     val pluginGroupedCommands: MutableSet<LiteralArgumentBuilder<CommandSourceStack>> = mutableSetOf()
@@ -94,6 +109,38 @@ class CommandBuilder {
 
         val child = LiteralArgumentBuilder.literal<CommandSourceStack>(childName)
             .then(arg)
+
+        command = command.then(child)
+        return this
+    }
+
+    fun addChildWithArguments(
+        childName: String,
+        argsList: List<CommandArgument>,
+        attachExecutesToEachNode: Boolean = false,
+        action: (CommandContext<CommandSourceStack>) -> Int
+    ): CommandBuilder {
+        if (argsList.isEmpty()) return addChild(childName, action)
+
+        // build chain from last -> first
+        var current: RequiredArgumentBuilder<CommandSourceStack, Any>? = null
+
+        for ((idx, arg) in argsList.asReversed().withIndex()) {
+            val isDeepest = idx == 0
+            @Suppress("UNCHECKED_CAST")
+            val req = RequiredArgumentBuilder.argument<CommandSourceStack, Any>(
+                arg.name, arg.type as ArgumentType<Any>
+            ).apply {
+                arg.suggests?.let { suggests(it) }
+                if (attachExecutesToEachNode || isDeepest) executes(action)
+            }
+
+            if (current != null) req.then(current)
+            current = req
+        }
+
+        val child = LiteralArgumentBuilder.literal<CommandSourceStack>(childName)
+            .then(current as ArgumentBuilder<CommandSourceStack, *>)
 
         command = command.then(child)
         return this

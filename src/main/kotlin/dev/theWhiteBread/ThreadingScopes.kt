@@ -9,9 +9,11 @@ import java.util.concurrent.Executors
 
 class ThreadingScopes(private val pluginJob: Job) {
     val pluginScope = CoroutineScope(Dispatchers.Default + pluginJob)
+
     val migrationDispatcher = Executors.newFixedThreadPool(
         maxOf(1, Runtime.getRuntime().availableProcessors() - 1)
     ).asCoroutineDispatcher()
+
     val bukkitDispatcher = object : CoroutineDispatcher() {
         override fun dispatch(context: kotlin.coroutines.CoroutineContext, block: Runnable) {
             TheWhiteBread.instance.server.scheduler.runTask(TheWhiteBread.instance, block)

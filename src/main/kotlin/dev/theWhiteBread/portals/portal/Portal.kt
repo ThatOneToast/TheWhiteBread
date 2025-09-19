@@ -1,8 +1,9 @@
-package dev.theWhiteBread.portals
+package dev.theWhiteBread.portals.portal
 
 import dev.theWhiteBread.Keys
 import dev.theWhiteBread.PDC
 import dev.theWhiteBread.TheWhiteBread
+import dev.theWhiteBread.portals.PortalType
 import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
 import org.bukkit.Location

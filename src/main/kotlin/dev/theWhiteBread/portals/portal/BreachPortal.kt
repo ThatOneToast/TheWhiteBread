@@ -1,8 +1,11 @@
-package dev.theWhiteBread.portals
+package dev.theWhiteBread.portals.portal
 
 import dev.theWhiteBread.colorMul
 import dev.theWhiteBread.intToColor
 import dev.theWhiteBread.lerpColor
+import dev.theWhiteBread.portals.PortalManager
+import dev.theWhiteBread.portals.PortalType
+import dev.theWhiteBread.portals.portal.UnstableBreachPortal
 import dev.theWhiteBread.serializables.LocationSerializer
 import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
@@ -38,7 +41,14 @@ open class BreachPortal(
 
     fun makeUnstable(): UnstableBreachPortal {
         PortalManager.deRegisterPortal(id, true)
-        return UnstableBreachPortal(id, owner, location, destination, persistence = persistence, color = color).registerPortal(true)
+        return UnstableBreachPortal(
+            id,
+            owner,
+            location,
+            destination,
+            persistence = persistence,
+            color = color
+        ).registerPortal(true)
     }
 
     override fun renderPortal() {
@@ -111,16 +121,6 @@ open class BreachPortal(
         if (right.lengthSquared() < 1e-6) right = Vector(1.0, 0.0, 0.0)
         right.normalize()
         val upPlane = right.clone().crossProduct(normal).normalize()
-
-        fun lerpColor(a: Color, b: Color, tMix: Double): Color {
-            fun mixInt(x: Int, y: Int, t2: Double) =
-                (x * (1.0 - t2) + y * t2).roundToInt().coerceIn(0, 255)
-            return Color.fromRGB(
-                mixInt(a.red, b.red, tMix),
-                mixInt(a.green, b.green, tMix),
-                mixInt(a.blue, b.blue, tMix)
-            )
-        }
 
         val rnd = Random.Default
 
@@ -198,8 +198,6 @@ open class BreachPortal(
             val rimYw = location.y + right.y * rimX + upPlane.y * rimY
             val rimZw = location.z + right.z * rimX + upPlane.z * rimY
 
-            // short inward spike
-            val toothDepth = 0.34 * rx * (0.7 + 0.6 * mouthPulse)
             for (s in 1..toothLen) {
                 val frac = s.toDouble() / (toothLen + 1)
                 // lerp rim -> center (small jitter)

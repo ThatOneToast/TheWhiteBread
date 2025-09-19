@@ -2,12 +2,16 @@ package dev.theWhiteBread
 
 import com.zaxxer.hikari.HikariDataSource
 import dev.theWhiteBread.commands.BreadedCommandMap
+import dev.theWhiteBread.commands.command.HelpCommand
 import dev.theWhiteBread.commands.command.LocationsCommand
 import dev.theWhiteBread.commands.command.VeinminerCommand
+import dev.theWhiteBread.commands.debug.ChatMenuCommand
 import dev.theWhiteBread.commands.debug.GiveCommand
 import dev.theWhiteBread.commands.debug.MenuCommand
+import dev.theWhiteBread.commands.debug.PortalsCommand
 import dev.theWhiteBread.commands.debug.StructuresCommand
 import dev.theWhiteBread.items.ItemRegistry
+import dev.theWhiteBread.listeners.RecipesListener
 import dev.theWhiteBread.listeners.enchantments.AutoSmeltListener
 import dev.theWhiteBread.listeners.enchantments.EXPBoostListener
 import dev.theWhiteBread.listeners.enchantments.VeinminerListener
@@ -23,8 +27,11 @@ import dev.theWhiteBread.listeners.storage_system.controller.ControllerPlacement
 import dev.theWhiteBread.listeners.storage_system.controller.LoadingOfControllersListener
 import dev.theWhiteBread.portals.PortalManager
 import dev.theWhiteBread.listeners.portals.PortalTimingListener
+import dev.theWhiteBread.listeners.portals.PortalUtilsListener
+import dev.theWhiteBread.recipes.recipe.StorageControllerRecipe
 import dev.theWhiteBread.storage_system.container.ItemTransport
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import org.bukkit.plugin.java.JavaPlugin
 
 class TheWhiteBread : JavaPlugin() {
@@ -33,21 +40,22 @@ class TheWhiteBread : JavaPlugin() {
         instance = this
         pluginLogger = PluginLogger(this)
         database = Database().database
+        
+
+        if (AREWEDEBUGGING) {
+            for (i in 1..25) {
+                pluginLogger.warning("WE ARE IN DEBUG MODE")
+            }
+        }
     }
+
 
     override fun onEnable() {
         // Plugin startup logic
         ItemRegistry.loadItemRegistry()
-        PortalManager.load(this)
 
         ItemTransport.storageManagerPreparation.runTaskTimer(this, 0, 1200L)
         ItemTransport.storageManagerInvExecution.runTaskTimer(this, 60L, 1200L)
-
-        server.scheduler.scheduleSyncRepeatingTask(this, {
-            PortalManager.getAllPortals().forEach { portal ->
-                portal.renderPortal()
-            }
-        }, 0, 2)
 
         Test.register()
 
@@ -57,6 +65,9 @@ class TheWhiteBread : JavaPlugin() {
         StructuresCommand.register()
         MenuCommand.register()
         GiveCommand.register()
+        PortalsCommand.register()
+        ChatMenuCommand.register()
+        HelpCommand.register()
 
         // Registers grouped commands
         BreadedCommandMap.loadCommands()
@@ -75,12 +86,26 @@ class TheWhiteBread : JavaPlugin() {
         PortalTimingListener.register(); PortalTimingListener.start()
         DimensionalPlacementsListener.register()
         DimensionalAccessListener.register()
+        PortalUtilsListener.register()
+        RecipesListener.register()
+
+        // ------------------ Recipe Registration ------------------
+        StorageControllerRecipe.computeRecipe(this)
+
+        server.scheduler.scheduleSyncRepeatingTask(this, {
+            PortalManager.getAllPortals().forEach { portal ->
+                portal.renderPortal()
+            }
+        }, 0, 2)
     }
 
     override fun onDisable() {
         // Plugin shutdown logic
         PortalManager.saveAll()
         PortalTimingListener.stop()
+        threadingScopes.pluginScope.cancel()
+        threadingScopes.bukkitDispatcher.cancel()
+        threadingScopes.migrationDispatcher.cancel()
     }
 
 

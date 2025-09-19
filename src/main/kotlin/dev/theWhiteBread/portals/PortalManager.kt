@@ -3,6 +3,7 @@ package dev.theWhiteBread.portals
 import dev.theWhiteBread.Keys
 import dev.theWhiteBread.PDC
 import dev.theWhiteBread.TheWhiteBread
+import dev.theWhiteBread.portals.portal.Portal
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.Location
@@ -154,15 +155,45 @@ object PortalManager {
         plugin.server.worlds.forEach { saveWorld(it) }
     }
 
-    @JvmStatic
     fun load(plugin: JavaPlugin): PortalManager {
         plugin.server.worlds.forEach { world ->
             val portals = world.persistentDataContainer.get(Keys.portals, PDC.portals) ?: return@forEach
             portals.values.forEach {
+                TheWhiteBread.pluginLogger.info("Registered portal ON LOAD: ${it.id}")
                 registerPortal(it, false)
             }
         }
 
         return PortalManager
+    }
+
+    fun loadWorldsPortals(plugin: JavaPlugin, worldUID: UUID) {
+        val pdc = plugin.server.getWorld(worldUID)?.persistentDataContainer ?: return
+        val portals = pdc.get(Keys.portals, PDC.portals) ?: return
+        portals.values.forEach {
+            TheWhiteBread.pluginLogger.info("Registered portal ON LOAD WORLD: ${it.id}")
+            registerPortal(it, false)
+        }
+    }
+
+    fun unLoad(plugin: JavaPlugin): PortalManager {
+        plugin.server.worlds.forEach { world ->
+            val portals = world.persistentDataContainer.get(Keys.portals, PDC.portals) ?: return@forEach
+            portals.values.forEach {
+                TheWhiteBread.pluginLogger.info("Registered portal ON LOAD: ${it.id}")
+                deRegisterPortal(it.id, false)
+            }
+        }
+
+        return PortalManager
+    }
+
+    fun unLoadWorldsPortals(plugin: JavaPlugin, worldUID: UUID) {
+        val pdc = plugin.server.getWorld(worldUID)?.persistentDataContainer ?: return
+        val portals = pdc.get(Keys.portals, PDC.portals) ?: return
+        portals.values.forEach {
+            TheWhiteBread.pluginLogger.info("Registered portal ON LOAD WORLD: ${it.id}")
+            deRegisterPortal(it.id, false)
+        }
     }
 }

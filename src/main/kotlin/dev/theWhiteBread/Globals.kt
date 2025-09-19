@@ -5,7 +5,7 @@ import com.zaxxer.hikari.HikariDataSource
 import dev.theWhiteBread.menus.MenuItem
 import dev.theWhiteBread.menus.createMenuReadyItem
 import dev.theWhiteBread.portals.DimensionalReceiver
-import dev.theWhiteBread.portals.Portal
+import dev.theWhiteBread.portals.portal.Portal
 import dev.theWhiteBread.serializables.SerializableLocation
 import dev.theWhiteBread.storage_system.ControllerRegistry
 import dev.theWhiteBread.storage_system.container.StorageContainer
@@ -22,6 +22,8 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.minimessage.tag.Tag
 import org.bukkit.NamespacedKey
 import net.kyori.adventure.key.Key
+import net.kyori.adventure.text.Component
+import net.minecraft.world.phys.Vec3
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Location
@@ -35,6 +37,8 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataAdapterContext
 import org.bukkit.persistence.PersistentDataType
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.UUID
 import kotlin.collections.forEach
 import kotlin.math.roundToInt
@@ -327,4 +331,17 @@ fun lerpColor(a: Color, b: Color, tMix: Double): Color {
         mixInt(a.green, b.green, tMix),
         mixInt(a.blue, b.blue, tMix)
     )
+}
+
+fun Vec3.toLocation(worldUID: UUID): Location {
+    return Location(Bukkit.getWorld(worldUID)!!, this.x, this.y, this.z )
+}
+
+fun Vec3.roundTo2Place(mode: RoundingMode = RoundingMode.HALF_UP): Vec3 {
+    fun r(d: Double) = BigDecimal.valueOf(d).setScale(2, mode).toDouble()
+    return Vec3(r(this.x), r(this.y), r(this.z))
+}
+
+fun String.toComponent(): Component {
+    return miniMessage.deserialize(this)
 }

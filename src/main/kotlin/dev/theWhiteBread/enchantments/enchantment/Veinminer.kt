@@ -7,6 +7,7 @@ import dev.theWhiteBread.enchantments.hasEnchantment
 import dev.theWhiteBread.miniMessage
 import io.papermc.paper.registry.data.EnchantmentRegistryEntry
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
 import org.bukkit.Tag
 import org.bukkit.block.Block
@@ -34,24 +35,82 @@ object Veinminer {
         inEnchantmentTable = true
     )
 
-    enum class MinerStyle {
-        Disk, // area mining on the face plane
-        Vein  // connected same-material
+    enum class MinerStyle(val description: String) {
+        Disk(
+            "Area mining on the face plane: collects blocks in a disk/sphere pattern " +
+                    "around the origin. Good for broad, localized clearing."
+        ),
+        Vein(
+            "Connected-component mining: breaks contiguous same-material blocks " +
+                    "(vein-like). Good for following ore veins or tree clusters."
+        );
+
+        companion object {
+            fun toStringSet(): Set<String> = entries.map { it.name }.toSet()
+        }
+
+        fun toComponent(): Component =
+            Component.text("${name}: ", NamedTextColor.AQUA)
+                .append(Component.text(description, NamedTextColor.GRAY))
     }
 
-    enum class MinerFilter {
-        Ores,
-        Logs,
-        Blocks
+    enum class MinerFilter(val description: String) {
+        Ores(
+            "Include ore-type blocks (ores and ore-like blocks). " +
+                    "Uses MaterialTags.ORES where available, with fallbacks."
+        ),
+        Logs(
+            "Include log and stem blocks (wood). Useful for felling trees or " +
+                    "harvesting trunks."
+        ),
+        Blocks(
+            "Include only the exact same block type as the origin. " +
+                    "Use when you want strict same-type harvesting."
+        );
+
+        companion object {
+            fun toStringSet(): Set<String> = entries.map { it.name }.toSet()
+        }
+
+        fun toComponent(): Component =
+            Component.text("${name}: ", NamedTextColor.GOLD)
+                .append(Component.text(description, NamedTextColor.GRAY))
     }
 
-    enum class DiskSweep {
-        CenterOut,
-        UpOnly,
-        DownOnly,
-        UpDown,
-        ForwardOnly, // only meaningful on horizontal disks (plane XZ)
-        LeftRight
+    enum class DiskSweep(val description: String) {
+        CenterOut(
+            "Expand outward from the origin in all directions (3D sphere-style). " +
+                    "Useful for symmetric area mining around the block."
+        ),
+        UpOnly(
+            "Only include blocks above the origin (positive Y) up to the radius. " +
+                    "Useful for digging upward / clearing ceilings."
+        ),
+        DownOnly(
+            "Only include blocks below the origin (negative Y) up to the radius. " +
+                    "Useful for digging down / stripping out below the block."
+        ),
+        UpDown(
+            "Include blocks both above and below the origin alternately out to the radius. " +
+                    "Combines UpOnly and DownOnly to scan vertically both directions."
+        ),
+        ForwardOnly(
+            "Step only in the cardinal forward direction relative to the player (XZ plane). " +
+                    "Only meaningful for horizontal disks — moves in the player's forward cardinal axis."
+        ),
+        LeftRight(
+            "Step only left and right relative to the player's forward direction (XZ plane). " +
+                    "Produces a line across the face plane perpendicular to forward."
+        );
+
+        ;
+
+        fun toComponent(): Component = miniMessage.deserialize("<gold>$name:</gold> <gray>$description")
+
+        companion object {
+            fun toStringSet(): Set<String> = entries.toSet().map { it.toString() }.toSet()
+        }
+
     }
 
 

@@ -9,7 +9,7 @@ import dev.theWhiteBread.listeners.input.ChatInput
 import dev.theWhiteBread.message
 import dev.theWhiteBread.portals.DimensionalReceiver
 import dev.theWhiteBread.portals.PortalManager
-import dev.theWhiteBread.portals.UnstableBreachPortal
+import dev.theWhiteBread.portals.portal.UnstableBreachPortal
 import dev.theWhiteBread.toSerLocation
 import org.bukkit.block.TileState
 import org.bukkit.event.EventHandler
