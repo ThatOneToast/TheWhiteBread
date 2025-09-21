@@ -11,6 +11,8 @@ import dev.theWhiteBread.commands.debug.MenuCommand
 import dev.theWhiteBread.commands.debug.PortalsCommand
 import dev.theWhiteBread.commands.debug.StructuresCommand
 import dev.theWhiteBread.items.ItemRegistry
+import dev.theWhiteBread.items.item.BuilderWand
+import dev.theWhiteBread.listeners.BreadListener
 import dev.theWhiteBread.listeners.RecipesListener
 import dev.theWhiteBread.listeners.enchantments.AutoSmeltListener
 import dev.theWhiteBread.listeners.enchantments.EXPBoostListener
@@ -32,9 +34,12 @@ import dev.theWhiteBread.recipes.recipe.StorageControllerRecipe
 import dev.theWhiteBread.storage_system.container.ItemTransport
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.plugin.java.JavaPlugin
 
-class TheWhiteBread : JavaPlugin() {
+class TheWhiteBread : JavaPlugin(), BreadListener {
 
     override fun onLoad() {
         instance = this
@@ -49,6 +54,10 @@ class TheWhiteBread : JavaPlugin() {
         }
     }
 
+    @EventHandler
+    private fun stuff(event: PlayerJoinEvent) {
+        BuilderWand.giveToPlayer(event.player)
+    }
 
     override fun onEnable() {
         // Plugin startup logic
@@ -57,7 +66,10 @@ class TheWhiteBread : JavaPlugin() {
         ItemTransport.storageManagerPreparation.runTaskTimer(this, 0, 1200L)
         ItemTransport.storageManagerInvExecution.runTaskTimer(this, 60L, 1200L)
 
-        Test.register()
+//        Test.register()
+
+        // ------------------ Item Ability Registration ------------------
+        BuilderWand.register()
 
         // ------------------ Command Registration ------------------
         VeinminerCommand.register()
@@ -73,20 +85,20 @@ class TheWhiteBread : JavaPlugin() {
         BreadedCommandMap.loadCommands()
 
         // ------------------ Listener Registration ------------------
+        this.register()
+
+        LoadingOfControllersListener.register(); ControllerPlacementsListener.register(); ControllerAccessListener.register(); ContainerPlacementListeners.register()
+//        PortalDetectionListener.register(); PortalTimingListener.register(); PortalTimingListener.start(); PortalUtilsListener.register()
+//        DimensionalPlacementsListener.register(); DimensionalAccessListener.register()
+
+
         VeinminerListener.register()
         AutoSmeltListener.register()
         EXPBoostListener.register()
+
         MenuListener.register()
-        LoadingOfControllersListener.register()
-        ControllerPlacementsListener.register()
-        ControllerAccessListener.register()
-        ContainerPlacementListeners.register()
         ChatInput.register()
-        PortalDetectionListener.register()
-        PortalTimingListener.register(); PortalTimingListener.start()
-        DimensionalPlacementsListener.register()
-        DimensionalAccessListener.register()
-        PortalUtilsListener.register()
+
         RecipesListener.register()
 
         // ------------------ Recipe Registration ------------------
