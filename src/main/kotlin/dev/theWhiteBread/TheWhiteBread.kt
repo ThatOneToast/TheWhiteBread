@@ -88,8 +88,8 @@ class TheWhiteBread : JavaPlugin(), BreadListener {
         this.register()
 
         LoadingOfControllersListener.register(); ControllerPlacementsListener.register(); ControllerAccessListener.register(); ContainerPlacementListeners.register()
-//        PortalDetectionListener.register(); PortalTimingListener.register(); PortalTimingListener.start(); PortalUtilsListener.register()
-//        DimensionalPlacementsListener.register(); DimensionalAccessListener.register()
+        PortalDetectionListener.register(); PortalTimingListener.register(); PortalTimingListener.start(); PortalUtilsListener.register()
+        DimensionalPlacementsListener.register(); DimensionalAccessListener.register()
 
 
         VeinminerListener.register()

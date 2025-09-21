@@ -39,6 +39,7 @@ import org.bukkit.persistence.PersistentDataAdapterContext
 import org.bukkit.persistence.PersistentDataType
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.nio.charset.Charset
 import java.util.UUID
 import kotlin.collections.forEach
 import kotlin.math.roundToInt
@@ -59,8 +60,10 @@ object Keys {
 
     val dimensialReceiver = NamespacedKey(TheWhiteBread.instance, "dimensial_receiver")
 
-    val itemAbility = NamespacedKey(TheWhiteBread.instance, "item_ability")
     val portals = NamespacedKey(TheWhiteBread.instance, "portal")
+
+    fun create(key: String): NamespacedKey = NamespacedKey(TheWhiteBread.instance, key)
+
 }
 
 
@@ -80,6 +83,7 @@ object PDC {
     val dimensialReceiver = pdcDataTypeOf<DimensionalReceiver>()
 
 
+
     /**
      * This is the latest version of ChunkStorageContainer
      *
@@ -94,9 +98,16 @@ object PDC {
      */
     val storageControllerData = pdcDataTypeOf<StorageControllerData>()
 
-    inline fun <reified T : Any> pdcDataTypeOf(
-        json: Json = Json { encodeDefaults = false; ignoreUnknownKeys = true }
-    ): PersistentDataType<ByteArray, T> {
+    val defaultJson = Json {
+        encodeDefaults = false
+        ignoreUnknownKeys = true
+    }
+
+
+    inline fun <reified T : Any> pdcDataTypeOf(json: Json = Json {
+        encodeDefaults = false
+        ignoreUnknownKeys = true
+    }): PersistentDataType<ByteArray, T> {
         val ser: KSerializer<T> = serializer()
 
         return object : PersistentDataType<ByteArray, T> {
