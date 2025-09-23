@@ -1,6 +1,7 @@
 package dev.theWhiteBread.items
 
 import dev.theWhiteBread.Keys
+import dev.theWhiteBread.PDC
 import dev.theWhiteBread.TheWhiteBread
 import dev.theWhiteBread.menus.MenuItem
 import dev.theWhiteBread.menus.createMenuReadyItem
@@ -18,17 +19,19 @@ object ItemRegistry {
 
 
     val storageController = createMenuReadyItem(
-        "<gold>Chunk Storage Controller</gold>",
+        "<gold>Storage Controller</gold>",
         listOf(
             "<gray>Place this storage controller in any",
             "<gray>chunk to unify your storage containers into 1!",
-            "<white>This does require you to place a book inside to access."
         ),
-        Material.LECTERN,
+        Material.CRAFTER,
         true
     ).apply {
-        itemMeta.persistentDataContainer.set(Keys.itemStorageController, PersistentDataType.BOOLEAN, true)
+        val meta = itemMeta
+        PDC.setValueOf<Boolean>(meta.persistentDataContainer, Keys.storageController, true)
         setData(DataComponentTypes.MAX_STACK_SIZE, 1)
+        meta.setMaxStackSize(1)
+        itemMeta = meta
     }
 
     val dimensionalReceiver = ItemStack(Material.ENCHANTING_TABLE).apply {

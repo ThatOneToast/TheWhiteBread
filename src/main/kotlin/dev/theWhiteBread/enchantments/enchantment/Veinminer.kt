@@ -240,7 +240,7 @@ object Veinminer {
         return dx * dx + dy * dy + dz * dz
     }
 
-    private fun isOre(m: Material): Boolean {
+    fun isOre(m: Material): Boolean {
         return try {
             MaterialTags.ORES.isTagged(m)
         } catch (_: Throwable) {
@@ -250,7 +250,7 @@ object Veinminer {
         }
     }
 
-    private fun isLog(m: Material): Boolean {
+    fun isLog(m: Material): Boolean {
         return try {
             Tag.LOGS.isTagged(m)
         } catch (_: Throwable) {

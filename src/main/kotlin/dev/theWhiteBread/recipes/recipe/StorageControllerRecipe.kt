@@ -9,7 +9,7 @@ import org.bukkit.inventory.ShapedRecipe
 object StorageControllerRecipe : Recipe {
     override fun recipe(): ShapedRecipe {
         return ShapedRecipe(
-            Keys.itemStorageControllerRecipe,
+            Keys.storageControllerRecipe,
             ItemRegistry.storageController
         ).apply {
             shape(

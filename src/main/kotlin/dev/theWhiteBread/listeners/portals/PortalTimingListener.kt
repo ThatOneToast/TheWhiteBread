@@ -2,11 +2,11 @@ package dev.theWhiteBread.listeners.portals
 
 import dev.theWhiteBread.TheWhiteBread
 import dev.theWhiteBread.listeners.BreadListener
-import dev.theWhiteBread.listeners.events.PlayerEnterPortalEvent
-import dev.theWhiteBread.listeners.events.PlayerEnterUnstablePortalEvent
-import dev.theWhiteBread.listeners.events.PlayerLeavePortalEvent
-import dev.theWhiteBread.listeners.events.PlayerLeaveUnstablePortalEvent
-import dev.theWhiteBread.listeners.events.PlayerPortalStayEvent
+import dev.theWhiteBread.listeners.events.portal.PlayerEnterPortalEvent
+import dev.theWhiteBread.listeners.events.portal.PlayerEnterUnstablePortalEvent
+import dev.theWhiteBread.listeners.events.portal.PlayerLeavePortalEvent
+import dev.theWhiteBread.listeners.events.portal.PlayerLeaveUnstablePortalEvent
+import dev.theWhiteBread.listeners.events.portal.PlayerPortalStayEvent
 import dev.theWhiteBread.portals.PortalManager
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler

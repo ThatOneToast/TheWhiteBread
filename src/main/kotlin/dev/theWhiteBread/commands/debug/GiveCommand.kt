@@ -4,9 +4,10 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import dev.theWhiteBread.commands.CommandBuilder
 import dev.theWhiteBread.commands.CommandSuggestionBuilder
 import dev.theWhiteBread.items.ItemRegistry
+import dev.theWhiteBread.items.item.BuilderWand
 
 object GiveCommand {
-    private val items = listOf("storage_controller", "dimensional_receiver")
+    private val items = listOf("storage_controller", "dimensional_receiver", "builders_wand")
 
     fun register() {
         CommandBuilder()
@@ -24,6 +25,7 @@ object GiveCommand {
                 when (StringArgumentType.getString(ctx, "item_name")) {
                     "storage_controller" -> player.inventory.addItem(ItemRegistry.storageController)
                     "dimensional_receiver" -> player.inventory.addItem(ItemRegistry.dimensionalReceiver)
+                    "builders_wand" -> player.inventory.addItem(BuilderWand.item)
                 }
                 1
             }}
