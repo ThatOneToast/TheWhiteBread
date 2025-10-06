@@ -18,22 +18,6 @@ object ItemRegistry {
     lateinit var menuItems: List<MenuItem>
 
 
-    val storageController = createMenuReadyItem(
-        "<gold>Storage Controller</gold>",
-        listOf(
-            "<gray>Place this storage controller in any",
-            "<gray>chunk to unify your storage containers into 1!",
-        ),
-        Material.CRAFTER,
-        true
-    ).apply {
-        val meta = itemMeta
-        PDC.setValueOf<Boolean>(meta.persistentDataContainer, Keys.storageController, true)
-        setData(DataComponentTypes.MAX_STACK_SIZE, 1)
-        meta.setMaxStackSize(1)
-        itemMeta = meta
-    }
-
     val dimensionalReceiver = ItemStack(Material.ENCHANTING_TABLE).apply {
         val meta = itemMeta
         meta.displayName(miniMessage.deserialize("<gold>dimensional Receiver"))
@@ -50,7 +34,7 @@ object ItemRegistry {
     }
 
     val itemsList: Collection<ItemStack> = listOf(
-        storageController, dimensionalReceiver
+        dimensionalReceiver
     )
 
     fun loadItemRegistry() {

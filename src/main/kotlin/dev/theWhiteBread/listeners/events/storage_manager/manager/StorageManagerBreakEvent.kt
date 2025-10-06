@@ -1,8 +1,7 @@
-package dev.theWhiteBread.listeners.events.storage_manager
+package dev.theWhiteBread.listeners.events.storage_manager.manager
 
 import dev.theWhiteBread.listeners.BaseEvent
 import dev.theWhiteBread.listeners.Events
-import dev.theWhiteBread.listeners.events.portal.PlayerPortalStayEvent
 import dev.theWhiteBread.storage_manager.manager.StorageManagerBlock
 import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList

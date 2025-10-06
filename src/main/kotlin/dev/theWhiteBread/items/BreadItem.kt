@@ -2,9 +2,11 @@ package dev.theWhiteBread.items
 
 import dev.theWhiteBread.*
 import dev.theWhiteBread.listeners.BreadListener
+import dev.theWhiteBread.listeners.events.TickEvent
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
+import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.event.player.PlayerMoveEvent
@@ -12,6 +14,7 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
+import org.bukkit.scheduler.BukkitRunnable
 
 
 open class BreadItem(
@@ -32,7 +35,6 @@ open class BreadItem(
 
     fun deleteData(vararg keys: String) {
         keys.forEach { item.itemMeta.persistentDataContainer.remove(Keys.create(it)) }
-
     }
 
     fun register() {
@@ -66,10 +68,10 @@ open class BreadItem(
     open fun equipOffHand(player: Player) {}
     open fun deEquipOffHand(player: Player) {}
 
+    open fun onTick(event: TickEvent, playersHolding: HashSet<Player>) {}
+
     open fun updateItem(newState: ItemStack?) {
         if (newState == null ) return
-//        val id = newState.getOrCreateId(Keys.create("id"))
-//        if (item.getId(Keys.create("id")) == id) return
         item = newState
     }
 
@@ -123,6 +125,36 @@ open class BreadItem(
                     Action.LEFT_CLICK_AIR -> onLeftClickAir(event)
                     Action.RIGHT_CLICK_AIR -> onRightClickAir(event)
                     Action.PHYSICAL -> onAssPressure(event)
+                }
+            }
+
+            @EventHandler
+            fun onItemDrop(event: PlayerDropItemEvent) {
+                val droppedStack = event.itemDrop.itemStack
+                if (!isThis(droppedStack)) return
+
+                val player = event.player
+
+                val currentMain = player.inventory.itemInMainHand
+                val currentOff = player.inventory.itemInOffHand
+
+                if (isThis(currentMain)) {
+                    updateItem(currentMain)
+                    deEquip(player)
+                } else if (isThis(currentOff)) {
+                    updateItem(currentOff)
+                    deEquipOffHand(player)
+                } else {
+                    updateItem(droppedStack)
+                    deEquip(player)
+                    object : BukkitRunnable() {
+                        override fun run() {
+                            val m = player.inventory.itemInMainHand
+                            val o = player.inventory.itemInOffHand
+                            if (!isThis(m)) deEquip(player)
+                            if (!isThis(o)) deEquipOffHand(player)
+                        }
+                    }.runTaskLater(TheWhiteBread.instance, 1L)
                 }
             }
 
@@ -190,6 +222,18 @@ open class BreadItem(
                     equip(event.player)
                 }
 
+            }
+
+            @EventHandler
+            fun onTick(event: TickEvent) {
+                val onlinePlayer = TheWhiteBread.instance.server.onlinePlayers
+                val onlinePlayersHoldingItem = onlinePlayer.filter {
+                    val mainHand = it.inventory.itemInMainHand
+                    val offHand = it.inventory.itemInOffHand
+
+                    isThis(mainHand) || isThis(offHand)
+                }
+                onTick(event, onlinePlayersHoldingItem.toHashSet())
             }
 
 

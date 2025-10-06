@@ -1,4 +1,4 @@
-package dev.theWhiteBread.listeners.events.storage_manager
+package dev.theWhiteBread.listeners.events.storage_manager.manager
 
 import dev.theWhiteBread.listeners.BaseEvent
 import dev.theWhiteBread.listeners.Events
@@ -11,7 +11,6 @@ import org.bukkit.event.player.PlayerInteractEvent
 class StorageManagerAccessEvent(
     val player: Player,
     val manager: StorageManagerBlock,
-    val view: ManagerMenu,
     val parentEvent: PlayerInteractEvent
     ): BaseEvent() {
 

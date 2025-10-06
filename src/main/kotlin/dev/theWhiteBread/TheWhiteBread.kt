@@ -9,19 +9,29 @@ import dev.theWhiteBread.commands.command.VeinminerCommand
 import dev.theWhiteBread.commands.debug.*
 import dev.theWhiteBread.items.ItemRegistry
 import dev.theWhiteBread.items.item.BuilderWand
+import dev.theWhiteBread.items.item.StorageContainerItem
+import dev.theWhiteBread.items.item.StorageManagerItem
 import dev.theWhiteBread.listeners.BreadListener
 import dev.theWhiteBread.listeners.RecipesListener
 import dev.theWhiteBread.listeners.enchantments.AutoSmeltListener
 import dev.theWhiteBread.listeners.enchantments.EXPBoostListener
 import dev.theWhiteBread.listeners.enchantments.VeinminerListener
+import dev.theWhiteBread.listeners.events.TickEvent
 import dev.theWhiteBread.listeners.input.ChatInput
 import dev.theWhiteBread.listeners.menus.MenuListener
-import dev.theWhiteBread.listeners.storage_system.controller.SMEventCallerListener
-import dev.theWhiteBread.listeners.storage_system.controller.events.Test
+import dev.theWhiteBread.listeners.storage_system.container.events.ContainerAccessListener
+import dev.theWhiteBread.listeners.storage_system.container.events.ContainerBreakListener
+import dev.theWhiteBread.listeners.storage_system.container.events.ContainerPlaceListener
+import dev.theWhiteBread.listeners.storage_system.container.events.StorageContainerListener
+import dev.theWhiteBread.listeners.storage_system.controller.events.ControllerAccessListener
+import dev.theWhiteBread.listeners.storage_system.controller.events.ControllerBreakListener
+import dev.theWhiteBread.listeners.storage_system.controller.events.ControllerPlaceListener
+import dev.theWhiteBread.listeners.storage_system.controller.events.StorageManagerListener
 import dev.theWhiteBread.recipes.recipe.StorageControllerRecipe
 import dev.theWhiteBread.storage_manager.StorageRegistry
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.plugin.java.JavaPlugin
@@ -68,6 +78,8 @@ class TheWhiteBread : JavaPlugin() {
 //        DimensionalPlacementsListener.register(); DimensionalAccessListener.register()
 
         BuilderWand.register()
+        StorageManagerItem.register()
+        StorageContainerItem.register()
 
         VeinminerListener.register()
         AutoSmeltListener.register()
@@ -78,8 +90,17 @@ class TheWhiteBread : JavaPlugin() {
 
         RecipesListener.register()
 
-        SMEventCallerListener.register()
-        Test.register()
+        StorageManagerListener.register()
+        StorageContainerListener.register()
+
+        ControllerPlaceListener.register()
+        ControllerAccessListener.register()
+        ControllerBreakListener.register()
+
+        ContainerPlaceListener.register()
+        ContainerBreakListener.register()
+        ContainerAccessListener.register()
+
 
         // ------------------ Recipe Registration ------------------
         StorageControllerRecipe.computeRecipe(this)
@@ -89,11 +110,16 @@ class TheWhiteBread : JavaPlugin() {
 //                portal.renderPortal()
 //            }
 //        }, 0, 2)
+
+        server.scheduler.scheduleSyncRepeatingTask(this, {
+            server.pluginManager.callEvent(TickEvent(
+                server.onlinePlayers.map { it.uniqueId }.toHashSet()
+            ))
+        }, 0, 1)
     }
 
     override fun onDisable() {
         // Plugin shutdown logic
-        StorageRegistry.storageManagers.save()
 //        PortalManager.saveAll()
 //        PortalTimingListener.stop()
         threadingScopes.pluginScope.cancel()

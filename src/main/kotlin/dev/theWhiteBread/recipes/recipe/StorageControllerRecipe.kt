@@ -2,7 +2,9 @@ package dev.theWhiteBread.recipes.recipe
 
 import dev.theWhiteBread.Keys
 import dev.theWhiteBread.items.ItemRegistry
+import dev.theWhiteBread.items.item.StorageManagerItem
 import dev.theWhiteBread.recipes.Recipe
+import dev.theWhiteBread.storage_manager.StorageRegistry
 import org.bukkit.Material
 import org.bukkit.inventory.ShapedRecipe
 
@@ -10,7 +12,7 @@ object StorageControllerRecipe : Recipe {
     override fun recipe(): ShapedRecipe {
         return ShapedRecipe(
             Keys.storageControllerRecipe,
-            ItemRegistry.storageController
+            StorageManagerItem.item
         ).apply {
             shape(
                 "ICI",

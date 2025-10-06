@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import dev.theWhiteBread.portals.DimensionalReceiver
 import dev.theWhiteBread.portals.portal.Portal
+import dev.theWhiteBread.serializables.InventoryData
 import dev.theWhiteBread.serializables.SerializableLocation
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
@@ -46,6 +47,7 @@ object Keys {
     val storageControllers = NamespacedKey(TheWhiteBread.instance, "storage_controllers")
     val storageController = NamespacedKey(TheWhiteBread.instance, "storage_controller")
     val storageControllerRecipe = NamespacedKey(TheWhiteBread.instance, "storage_controller_recipe")
+    val storageContainer = create("storage_container")
 
     val dimensialReceiver = NamespacedKey(TheWhiteBread.instance, "dimensial_receiver")
 
@@ -111,6 +113,24 @@ object PDC {
     ): V {
         pdc.set(key, pdcDataTypeOf<V>(), data)
         return data
+    }
+
+    fun hasValueOf(
+        pdc: PersistentDataContainer,
+        key: NamespacedKey
+    ): Boolean {
+        return pdc.has(key)
+    }
+
+    fun hasValueOf(
+        pdc: PersistentDataContainer,
+        key: String
+    ): Boolean {
+        return pdc.has(Keys.create(key))
+    }
+
+    fun deleteData(pdc: PersistentDataContainer, vararg keys: String) {
+        keys.forEach { pdc.remove(Keys.create(it)) }
     }
 
 
@@ -712,7 +732,7 @@ fun highlightChunkFor(
     plugin: JavaPlugin,
     player: Player,
     chunk: Chunk,
-    durationTicks: Long = 200,
+    durationTicks: Long = 100,
     intervalTicks: Long = 10,
     halfHeight: Int = 6,
     spacing: Int = 2,
@@ -730,4 +750,23 @@ fun highlightChunkFor(
         }
     }
     task.runTaskTimer(plugin, 0L, intervalTicks)
+}
+
+
+
+fun Inventory.toData(): InventoryData {
+    val contentsIterator = this.iterator().withIndex()
+
+    val baMap = mutableMapOf<Int, ByteArray>()
+
+    while (contentsIterator.hasNext()) {
+        val item = contentsIterator.next()
+        if (item.value == null) continue
+        baMap[item.index] = item.value.serializeAsBytes()
+    }
+
+    return InventoryData(
+        baMap.toMap(),
+        this.size
+    )
 }

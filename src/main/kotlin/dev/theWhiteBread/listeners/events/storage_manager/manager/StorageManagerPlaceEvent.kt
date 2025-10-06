@@ -1,6 +1,6 @@
-package dev.theWhiteBread.listeners.events.storage_manager
+package dev.theWhiteBread.listeners.events.storage_manager.manager
 
-import dev.theWhiteBread.items.ItemRegistry
+import dev.theWhiteBread.items.item.StorageManagerItem
 import dev.theWhiteBread.listeners.BaseEvent
 import dev.theWhiteBread.listeners.Events
 import dev.theWhiteBread.storage_manager.manager.StorageManagerBlock
@@ -32,7 +32,7 @@ class StorageManagerPlaceEvent(
      */
     fun cancelManagerPlacement() {
         manager.block.setType(Material.AIR, false)
-        player.inventory.addItem(ItemRegistry.storageController.clone())
+        player.inventory.addItem(StorageManagerItem.item)
     }
 
     companion object {
